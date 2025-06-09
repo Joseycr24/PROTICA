@@ -2,5 +2,6 @@
 *.docx
 *.csv
 *.xlsx
+*.xls
 *.venv/
 *.env/
