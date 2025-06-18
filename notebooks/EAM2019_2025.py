@@ -469,8 +469,9 @@ else:
 
 #%%
 #Se filtra solamente Bolivar
-eam1 =eam[eam['Departamento']=='Bolívar']
-eam1.drop(['Código Dane departamento','Departamento',\
+#-----------------------------------------------------------------------------------
+eam_bolivar =eam[eam['Departamento']=='Bolívar']
+eam_bolivar.drop(['Código Dane departamento','Departamento',\
         'Código Dane municipio','Código del cultivo',\
         'Nombre científico del cultivo','Grupo cultivo',\
         'Subgrupo','Estado físico del cultivo'],\
@@ -478,8 +479,8 @@ eam1.drop(['Código Dane departamento','Departamento',\
 
 # %%
 #Se instancia las clase DataPreproc y ExploraAnalysis
-preproce = DataPreproc(eam1)
-explora = ExploraAnalysis(eam1)
+preproce = DataPreproc(eam_bolivar)
+explora = ExploraAnalysis(eam_bolivar)
 
 #%%
 #Se usa o llama la clase DataPreproc
@@ -503,16 +504,214 @@ explora.show_duplicate_rows()
 explora.run_full_detection()
 
 # %%
-eam1.groupby(by=['cultivo'])['producción'].sum().sort_values(ascending=False)
+top_bolivar= eam_bolivar.groupby(by=['cultivo'])['producción'].sum().sort_values(ascending=False).head(5)
+
+cultivos_extra = ['coco', 'plátano', 'batata', 'patilla']
+
+produccion_extra = eam_bolivar[eam_bolivar['cultivo'].isin(cultivos_extra)] \
+    .groupby('cultivo')['producción'].sum()
+
+top_bolivar_expandido = pd.concat([top_bolivar, produccion_extra])
+
+top_bolivar_expandido.sort_values(ascending=False, inplace= True)
+
+top_bolivar_expandido
+
+#%%
+top = (top_bolivar_expandido.index)
+orden_columnas = top.tolist()
+orden_columnas = top.tolist()
+top_bolivar_data = eam_bolivar[eam_bolivar['cultivo'].isin(top)]
+produccion_bolivar = (
+    top_bolivar_data.groupby(['cultivo', 'año'])['producción']
+    .sum()
+    .reset_index()
+    .sort_values(by=['cultivo', 'año'])
+)
+pivot_bolivar = produccion_bolivar.pivot(index='año', columns='cultivo', values='producción')
+pivot_ordenado_boli = pivot_bolivar[orden_columnas]
+pivot_ordenado_boli
 
 # %%
-# analisis Cordoba
-eam_cord =eam[eam['Departamento']=='Bolívar']
-eam_cord.drop(['Código Dane departamento','Departamento',\
+# analisis Archipiélago de San Andrés, Providencia y Santa Catalina
+#-----------------------------------------------------------------------------------
+eam_san =eam[eam['Departamento']=='Archipiélago de San Andrés, Providencia y Santa Catalina']
+eam_san.drop(['Código Dane departamento','Departamento',\
         'Código Dane municipio','Código del cultivo',\
         'Nombre científico del cultivo','Grupo cultivo',\
         'Subgrupo','Estado físico del cultivo'],\
         axis=1, inplace=True)
 
-preproce = DataPreproc(eam_cord)
+# %%
+#Se instancia las clase DataPreproc y ExploraAnalysis
+preproce = DataPreproc(eam_san)
+explora = ExploraAnalysis(eam_san)
+
 #%%
+#Se usa o llama la clase DataPreproc
+preproce.run_all_preprocessing()
+
+# %%
+#Se usa o llama la clase ExploraAnalysis
+explora.general_information()
+#%%
+explora.null_data()
+
+# %%
+explora.random_sample()
+# %%
+explora.descript_statis()
+# %%
+explora.corre_matri(plot=True)
+# %%
+explora.show_duplicate_rows()
+# %%
+explora.run_full_detection()
+
+# %%
+top_san= eam_san.groupby(by=['cultivo'])['producción'].sum().sort_values(ascending=False).head(5)
+
+cultivos_extra = ['arroz', 'ñame', 'maíz', 'palma de aceite']
+
+produccion_extra = eam_san[eam_san['cultivo'].isin(cultivos_extra)] \
+    .groupby('cultivo')['producción'].sum()
+
+top_san_expandido = pd.concat([top_san, produccion_extra])
+
+top_san_expandido.sort_values(ascending=False, inplace = True)
+
+top_san_expandido
+
+#%%
+top = (top_san_expandido.index)
+orden_columnas = top.tolist()
+top_san_data = eam_san[eam_san['cultivo'].isin(top)]
+produccion_san = (
+    top_san_data.groupby(['cultivo', 'año'])['producción']
+    .sum()
+    .reset_index()
+    .sort_values(by=['cultivo', 'año'])
+)
+pivot_san = produccion_san.pivot(index='año', columns='cultivo', values='producción')
+pivot_ordenado_san = pivot_san[orden_columnas]
+pivot_ordenado_san
+
+# %%
+# analisis Cordoba
+#-----------------------------------------------------------------------------------
+eam_cord =eam[eam['Departamento']=='Córdoba']
+eam_cord.drop(['Código Dane departamento','Departamento',\
+        'Código Dane municipio','Código del cultivo',\
+        'Nombre científico del cultivo','Grupo cultivo',\
+        'Subgrupo','Estado físico del cultivo'],\
+        axis=1, inplace=True)
+# %%
+#Se instancia las clase DataPreproc y ExploraAnalysis
+preproce = DataPreproc(eam_cord)
+explora = ExploraAnalysis(eam_cord)
+
+#%%
+#Se usa o llama la clase DataPreproc
+preproce.run_all_preprocessing()
+# %%
+#Se usa o llama la clase ExploraAnalysis
+explora.general_information()
+#%%
+explora.null_data()
+
+# %%
+explora.descript_statis()
+
+# %%
+explora.show_duplicate_rows()
+# %%
+explora.run_full_detection()
+
+# %%
+top_cord= eam_cord.groupby(by=['cultivo'])['producción'].sum().sort_values(ascending=False).head(5)
+
+cultivos_extra = ['palma de aceite', 'coco', 'batata', 'patilla']
+
+produccion_extra = eam_cord[eam_cord['cultivo'].isin(cultivos_extra)] \
+    .groupby('cultivo')['producción'].sum()
+
+top_cord_expandido = pd.concat([top_cord, produccion_extra])
+
+top_cord_expandido.sort_values(ascending=False, inplace = True)
+
+top_cord_expandido
+
+#%%
+top = (top_cord_expandido.index)
+orden_columnas = top.tolist()
+top_cord_data = eam_cord[eam_cord['cultivo'].isin(top)]
+produccion_cord = (
+    top_cord_data.groupby(['cultivo', 'año'])['producción']
+    .sum()
+    .reset_index()
+    .sort_values(by=['cultivo', 'año'])
+)
+pivot_cord = produccion_cord.pivot(index='año', columns='cultivo', values='producción')
+pivot_ordenado_cord = pivot_cord[orden_columnas]
+pivot_ordenado_cord
+
+
+# %%
+# analisis sucre
+#-----------------------------------------------------------------------------------
+eam_sucre =eam[eam['Departamento']=='Sucre']
+eam_sucre.drop(['Código Dane departamento','Departamento',\
+        'Código Dane municipio','Código del cultivo',\
+        'Nombre científico del cultivo','Grupo cultivo',\
+        'Subgrupo','Estado físico del cultivo'],\
+        axis=1, inplace=True)
+# %%
+#Se instancia las clase DataPreproc y ExploraAnalysis
+preproce = DataPreproc(eam_sucre)
+explora = ExploraAnalysis(eam_sucre)
+
+#%%
+#Se usa o llama la clase DataPreproc
+preproce.run_all_preprocessing()
+# %%
+#Se usa o llama la clase ExploraAnalysis
+explora.general_information()
+#%%
+explora.null_data()
+
+# %%
+explora.descript_statis()
+
+# %%
+explora.show_duplicate_rows()
+# %%
+explora.run_full_detection()
+
+# %%
+top_sucre= eam_sucre.groupby(by=['cultivo'])['producción'].sum().sort_values(ascending=False).head(5)
+
+cultivos_extra = ['palma de aceite', 'coco', 'batata', 'plátano']
+
+produccion_extra = eam_sucre[eam_sucre['cultivo'].isin(cultivos_extra)] \
+    .groupby('cultivo')['producción'].sum()
+
+top_sucre_expandido = pd.concat([top_sucre, produccion_extra])
+
+top_sucre_expandido.sort_values(ascending=False, inplace = True)
+
+top_sucre_expandido
+#%%
+top = (top_sucre_expandido.index)
+orden_columnas = top.tolist()
+top_sucre_data = eam_sucre[eam_sucre['cultivo'].isin(top)]
+produccion_sucre = (
+    top_sucre_data.groupby(['cultivo', 'año'])['producción']
+    .sum()
+    .reset_index()
+    .sort_values(by=['cultivo', 'año'])
+)
+pivot_sucre = produccion_sucre.pivot(index='año', columns='cultivo', values='producción')
+pivot_ordenado_sucre = pivot_sucre[orden_columnas]
+pivot_ordenado_sucre
+
+# %%
