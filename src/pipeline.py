@@ -10,7 +10,7 @@ def ejecutar_pipeline(path_archivo, codigo_depto, nombre_depto, cultivos_extra=[
 
     # Aquí podrías llamar a otras funciones de análisis, gráficas, etc.
     # Por ahora, simplemente guarda el archivo del departamento
-    nombre_archivo = f"{ruta_salida}/{nombre_depto}_{codigo_depto}.csv"
+    nombre_archivo = f"{ruta_salida}/{nombre_depto.replace(' ', '_')}_{codigo_depto}.csv"
     df_depto.to_csv(nombre_archivo, index=False)
     print(f"📁 Archivo generado: {nombre_archivo}")
 

@@ -80,16 +80,42 @@ class DataPreproc():
         new_col_names = [unidecode.unidecode(col) for col in self.df.columns]
         self.df.columns = new_col_names
         return self.df.columns
+
+    def corregir_nombres_inconsistentes(self, codigo_col, nombre_col):
+        """
+        Corrige nombres inconsistentes asociados a un mismo código, usando el nombre más frecuente.
+        """
+        nombre_correcciones = (
+            self.df.groupby([codigo_col, nombre_col])
+            .size()
+            .reset_index(name='frecuencia')
+            .sort_values([codigo_col, 'frecuencia'], ascending=[True, False])
+            .drop_duplicates(subset=[codigo_col])
+            .set_index(codigo_col)[nombre_col]
+            .to_dict()
+        )
+
+        self.df[nombre_col] = self.df[codigo_col].map(nombre_correcciones)
+        print(f"🔧 Correcciones aplicadas para columna '{nombre_col}':")
     
     def run_all_preprocessing(self):
         self.convert_to_lowercase()
         self.remove_spaces()
         self.replace_spaces_with_underscore()
         self.add_underscore_between_words()
-        self.remove_accents_from_column_names() 
+        self.remove_accents_from_column_names()
         self.convert_text_to_lowercase()
         self.remove_accents_from_text()
+
+        # Corrección automática de nombres inconsistentes
+        if 'codigo_dane_departamento' in self.df.columns and 'nombre_departamento' in self.df.columns:
+            self.corregir_nombres_inconsistentes('codigo_dane_departamento', 'nombre_departamento')
+        
+        if 'codigo_dane_municipio' in self.df.columns and 'nombre_municipio' in self.df.columns:
+            self.corregir_nombres_inconsistentes('codigo_dane_municipio', 'nombre_municipio')
+
         return self.df
+
 
 
 class ExploraAnalysis():
