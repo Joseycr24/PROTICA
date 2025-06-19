@@ -666,14 +666,6 @@ pivot_sucre = analizar_departamento_estandarizado(
 
 
 
-
-
-
-
-
-
-
-
 # %%
 # analisis Archipiélago de San Andrés, Providencia y Santa Catalina
 #-----------------------------------------------------------------------------------
