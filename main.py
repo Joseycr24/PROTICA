@@ -1,15 +1,17 @@
-from pathlib import Path
 import pandas as pd
+from pathlib import Path
 from src.preprocesamiento import DataPreproc
+from src.analisis_departamento import analizar_departamento
 from src.pipeline import ejecutar_pipeline, procesar_eam_2006_2018, procesar_eam_2019_2023
 
-# === Archivos históricos que se deben unir ===
+
+# ===Archivos históricos que se deben unir ===
 archivos_consecutivos = [
     Path("data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),
     Path("data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
 ]
 
-# === Paso 1: Cargar y procesar individualmente ===
+# ===Cargar y procesar individualmente ===
 archivo_2006_2018 = archivos_consecutivos[0]
 archivo_2019_2023 = archivos_consecutivos[1]
 
@@ -21,11 +23,11 @@ df_2019_2023 = pd.read_csv(archivo_2019_2023)
 df_2019_2023 = procesar_eam_2019_2023(df_2019_2023)
 print(f"📄 Cargado y procesado: {archivo_2019_2023.name}")
 
-# === Paso 2: Unir los archivos procesados ===
+# ===Unir los archivos procesados ===
 df_combinado = pd.concat([df_2006_2018, df_2019_2023], ignore_index=True)
 print(f"✅ Archivos combinados (Bolívar 2006–2023): {len(df_combinado)} filas\n")
 
-# === Paso 3: Preprocesamiento general ===
+# ===Preprocesamiento general ===
 preproc = DataPreproc(df_combinado)
 df_limpio = preproc.run_all_preprocessing()
 
@@ -33,14 +35,14 @@ ruta_limpio = Path("data/processed/archivo_limpio.csv")
 df_limpio.to_csv(ruta_limpio, index=False)
 print(f"✅ Archivo limpio guardado en: {ruta_limpio.resolve()}\n")
 
-# === Paso 4: Ejecutar pipeline por departamento ===
+# ===Ejecutar pipeline por departamento ===
 df = pd.read_csv(ruta_limpio, low_memory=False)
 print("🧪 Columnas reales del archivo limpio:", df.columns.tolist())
 
-# Asegúrate de que los nombres de columnas coincidan con los del archivo limpio
+#Asegúrate de que los nombres de columnas coincidan con los del archivo limpio
 departamentos = df[['codigo_dane_departamento', 'nombre_departamento']].drop_duplicates()
 
-# Cultivos adicionales
+#Cultivos adicionales
 cultivos_extra = ['coco', 'patilla', 'platano', 'batata']
 
 for _, row in departamentos.iterrows():
@@ -60,7 +62,7 @@ for _, row in departamentos.iterrows():
     except Exception as e:
         print(f"❌ Error procesando {nombre}: {e}\n")
 
-# === Paso 5 (opcional): Procesar otro archivo individual ===
+# ===Procesar otro archivo individual ===
 archivo_extra = Path("data/raw/Cesar/EVA_Cesar_20250615.csv")
 if archivo_extra.exists():
     df_extra = pd.read_csv(archivo_extra)
@@ -71,7 +73,7 @@ if archivo_extra.exists():
 
     ejecutar_pipeline(
         path_archivo=ruta_extra,
-        codigo_depto=200,  # ajusta con el código real del depto si es necesario
+        codigo_depto=200,  
         nombre_depto="Cesar",
         cultivos_extra=cultivos_extra,
         ruta_salida="reports"
@@ -80,9 +82,7 @@ if archivo_extra.exists():
 else:
     print("⚠️ Archivo de Cesar no encontrado.")
 
-# === Paso 6: Análisis exploratorio por departamento ===
-from src.analisis_departamento import analizar_departamento
-
+# ===Análisis exploratorio por departamento ===
 # Diccionario con cultivos extra por departamento
 cultivos_por_departamento = {
     "san andres y providencia": ['name', 'maiz', 'arroz', 'palma de aceite'],
@@ -94,10 +94,10 @@ cultivos_por_departamento = {
 print("\n🔍 INICIANDO ANÁLISIS EXPLORATORIO DEPARTAMENTAL\n")
 
 for nombre_depto, cultivos_extra in cultivos_por_departamento.items():
-    # Convertir nombre para archivo
+    #Convertir nombre para archivo
     nombre_archivo = nombre_depto.lower().replace(" ", "_")
     
-    # Obtener código DANE desde el DataFrame original
+    #Obtener código DANE desde el DataFrame original
     try:
         codigo = df[df['nombre_departamento'].str.lower() == nombre_depto.lower()]['codigo_dane_departamento'].iloc[0]
     except IndexError:

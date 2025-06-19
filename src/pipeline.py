@@ -1,15 +1,14 @@
 import pandas as pd
 
-# Función que ejecuta el pipeline completo por departamento
+#Función que ejecuta el pipeline completo por departamento
 def ejecutar_pipeline(path_archivo, codigo_depto, nombre_depto, cultivos_extra=[], ruta_salida="reports"):
-    # Carga el archivo limpio
+    #Carga el archivo limpio
     df = pd.read_csv(path_archivo)
 
-    # Filtra por departamento
+    #Filtra por departamento
     df_depto = df[df['codigo_dane_departamento'] == codigo_depto]
 
-    # Aquí podrías llamar a otras funciones de análisis, gráficas, etc.
-    # Por ahora, simplemente guarda el archivo del departamento
+    #Aqui guarda el archivo del departamento
     nombre_archivo = f"{ruta_salida}/{nombre_depto.replace(' ', '_')}_{codigo_depto}.csv"
     df_depto.to_csv(nombre_archivo, index=False)
     print(f"📁 Archivo generado: {nombre_archivo}")
