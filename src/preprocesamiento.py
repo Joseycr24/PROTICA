@@ -37,7 +37,7 @@ class DataPreproc():
         """
         Elimina los espacios al principio y al final de los nombres de las columnas.
         """        
-         
+        
         new_col_names = [old_names.strip() for old_names in self.df.columns]
         self.df.columns = new_col_names
         return self.df.columns

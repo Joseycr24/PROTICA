@@ -33,7 +33,7 @@ class DataPreproc():
         """
         Elimina los espacios al principio y al final de los nombres de las columnas.
         """        
-         
+        
         new_col_names = [old_names.strip() for old_names in self.df.columns]
         self.df.columns = new_col_names
         return self.df.columns
@@ -57,18 +57,24 @@ class DataPreproc():
         self.df.columns = new_col_names
         return self.df.columns
     
+        '''CONVERTIR TODA LA INFORMACIÓN DE LAS COLUMNAS EN MINÚSCULA  '''  
     def convert_text_to_lowercase(self):
         for col in self.df.select_dtypes(include='object').columns:
-            self.df[col] = self.df[col].str.lower()
+            self.df.loc[:, col] = self.df[col].str.lower() #Corrección .loc
+        return self.df
+    
     
     def remove_accents_from_text(self):
         """
         Elimina tildes, eñes y caracteres especiales de todas las columnas tipo texto.
         """
         for col in self.df.select_dtypes(include='object').columns:
-            self.df[col] = self.df[col].apply(lambda x: unidecode.unidecode(x) if isinstance(x, str) else x)
+            self.df.loc[:, col] = self.df[col].apply(
+            lambda x: unidecode.unidecode(x) if isinstance(x, str) else x
+        )  # Corrección con .loc
         return self.df
     
+    '''LLAMA A LAS FUNCIONES HECHAS'''
     def run_all_preprocessing(self):
         self.convert_to_lowercase()
         self.remove_spaces()
@@ -77,6 +83,8 @@ class DataPreproc():
         self.convert_text_to_lowercase()
         self.remove_accents_from_text()
         return self.df
+    
+    #######################################################################################################################
 #%%
 class ExploraAnalysis():
     
@@ -542,8 +550,8 @@ import matplotlib.pyplot as plt
 
 # %%
 #Definir rutas de archivos
-archivo2019_2023 = Path("../data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
-archivo2006_2018 = Path("../data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv")
+archivo2019_2023 = Path("../DATOS/Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
+archivo2006_2018 = Path("../DATOS/Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv")
 
 #%%
 #Cargar archivos
@@ -581,7 +589,8 @@ Rendimiento\n(t/ha) = Vamos hacer el calculo manual ya que tenemos Producción\n
 '''
 eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Producción\n(t)'] / eam2006_2018['Área Cosechada\n(ha)']
 eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Rendimiento\n(t/ha)'].fillna(0)
-
+#%%
+eam2006_2018.isna().sum()
 #%%
 # Se renombra columnas de eam2006_2018
 eam2006_2018.rename(columns=mapeo_2006_2018, inplace = True)
@@ -590,7 +599,7 @@ eam2006_2018.rename(columns=mapeo_2006_2018, inplace = True)
 # Se elimina columna 'Código del cultivo' de eam2019_2023
 eam2019_2023.drop(['Código del cultivo'], axis = 1, inplace = True)
 
-#%%
+#%% #borrar
 # Se renombra columnas de eam2019_2023
 mapeo_2019_2023 = {
     'Código Dane departamento': 'Codigo Dane departamento',
@@ -628,56 +637,11 @@ df_total.drop(['Nombre Departamento','Codigo Dane municipio',\
         'Nombre cientifico','Grupo cultivo','Subgrupo Cultivo',\
         'Estado fisico'], axis=1, inplace=True)
 
-#%%
-# San Andrés
-pivot_san = analizar_departamento_estandarizado(
-    df_total,
-    codigo_dane=88,
-    cultivos_extra=['name', 'maiz', 'arroz', 'palma de aceite'],
-    nombre_departamento='San Andrés'
-)
-
-#%%
-# Bolívar
-pivot_bolivar = analizar_departamento_estandarizado(
-    df_total,
-    codigo_dane=13,
-    cultivos_extra=['coco', 'patilla', 'platano', 'batata'],
-    nombre_departamento='Bolívar'
-)
-
-# Córdoba
-pivot_cordoba = analizar_departamento_estandarizado(
-    df_total,
-    codigo_dane=23,
-    cultivos_extra=['coco', 'batata', 'palma de aceite', 'patilla'],
-    nombre_departamento='Córdoba'
-)
-
-# Sucre
-pivot_sucre = analizar_departamento_estandarizado(
-    df_total,
-    codigo_dane=70,
-    cultivos_extra=['coco', 'platano', 'batata', 'palma de aceite'],
-    nombre_departamento='Sucre'
-)
-
-
-
-
-
-
-
-
-
-
-
-
 
 # %%
 # analisis Archipiélago de San Andrés, Providencia y Santa Catalina
 #-----------------------------------------------------------------------------------
-eam_san =df_total[df_total['Codigo Dane departamento']==88]
+eam_san =df_total[df_total['Codigo Dane departamento']==88].copy()
 eam_san.drop(['Codigo Dane departamento'], axis=1, inplace=True)
 
 # %%
@@ -737,7 +701,7 @@ pivot_ordenado_san
 #%%
 #Se filtra solamente Bolivar
 #-----------------------------------------------------------------------------------
-eam_bolivar =df_total[df_total['Codigo Dane departamento']==13]
+eam_bolivar =df_total[df_total['Codigo Dane departamento']==13].copy()
 eam_bolivar.drop(['Codigo Dane departamento'], axis=1, inplace=True)
 
 # %%
@@ -798,7 +762,7 @@ pivot_ordenado_boli
 # %%
 # analisis Cordoba
 #-----------------------------------------------------------------------------------
-eam_cord =df_total[df_total['Codigo Dane departamento']==23]
+eam_cord =df_total[df_total['Codigo Dane departamento']==23].copy()
 eam_cord.drop(['Codigo Dane departamento'], axis=1, inplace=True)
 
 # %%
@@ -854,7 +818,7 @@ pivot_ordenado_cord
 # %%
 # analisis sucre
 #-----------------------------------------------------------------------------------
-eam_sucre = df_total[df_total['Codigo Dane departamento']==70]
+eam_sucre = df_total[df_total['Codigo Dane departamento']==70].copy()
 eam_sucre.drop(['Codigo Dane departamento'], axis=1, inplace=True)
 
 # %%

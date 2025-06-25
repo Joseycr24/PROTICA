@@ -7,8 +7,8 @@ from src.pipeline import ejecutar_pipeline, procesar_eam_2006_2018, procesar_eam
 
 # ===Archivos históricos que se deben unir ===
 archivos_consecutivos = [
-    Path("data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),
-    Path("data/raw/Bolivar/Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
+    Path("DATOS\Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),
+    Path("DATOS\Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
 ]
 
 # ===Cargar y procesar individualmente ===
@@ -31,7 +31,7 @@ print(f"✅ Archivos combinados (Bolívar 2006–2023): {len(df_combinado)} fila
 preproc = DataPreproc(df_combinado)
 df_limpio = preproc.run_all_preprocessing()
 
-ruta_limpio = Path("data/processed/archivo_limpio.csv")
+ruta_limpio = Path("data/procesado/archivo_limpio.csv")
 df_limpio.to_csv(ruta_limpio, index=False)
 print(f"✅ Archivo limpio guardado en: {ruta_limpio.resolve()}\n")
 
