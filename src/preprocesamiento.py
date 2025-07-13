@@ -1,6 +1,8 @@
 import re
 import unidecode
 import pandas as pd
+import seaborn as sns
+import matplotlib as plt
 from pathlib import Path
 from catboost import CatBoostClassifier
 from sklearn.model_selection import GridSearchCV
@@ -227,11 +229,11 @@ class ExploraAnalysis():
         print(correlation_matrix)
 
         if plot:
-            plt.figure(figsize=(10, 8))
+            plt.figure(figsize=(10, 8))# type: ignore
             sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=f'.{round_digits}f')
-            plt.title(f'Matriz de Correlación ({method.title()})')
-            plt.tight_layout()
-            plt.show()
+            plt.title(f'Matriz de Correlación ({method.title()})')# type: ignore
+            plt.tight_layout() # type: ignore
+            plt.show()# type: ignore
     
     def show_duplicate_rows(self, subset=None):
         """
@@ -252,7 +254,7 @@ class ExploraAnalysis():
 
             # Detectar si está en Jupyter Notebook
             try:
-                shell = get_ipython().__class__.__name__
+                shell = get_ipython().__class__.__name__# type: ignore
                 if shell == 'ZMQInteractiveShell':
                     from IPython.display import display
                     display(duplicates)
@@ -343,7 +345,7 @@ class ExploraAnalysis():
         if column not in self.df.columns:
             print(f"La columna '{column}' no existe.")
             return []
-        if self.df[column].dtype == object or pd.api.types.is_categorical_dtype(self.df[column]):
+        if self.df[column].dtype == object or pd.api.types.is_categorical_dtype(self.df[column]): # type: ignore
             freq = self.df[column].value_counts(normalize=True)
             rares = freq[freq < threshold].index.tolist()
             print(f"[Rare Categories] Columna '{column}': {len(rares)} categorías raras detectadas.")
@@ -382,7 +384,7 @@ class ExploraAnalysis():
         for col in numeric_cols:
             outliers = self.detect_outliers_iqr(col)
             # Corregido para evitar error de ambigüedad al evaluar DataFrame en if
-            if not outliers.empty:
+            if not outliers.empty:# type: ignore
                 results[col] = outliers
         if not results:
             print("No se detectaron outliers en columnas numéricas.")
@@ -476,7 +478,7 @@ class ExploraAnalysis():
 
             param_grid = {'model_size_reg': [0.1, 1]}
             grid_search = GridSearchCV(
-                estimator=CatBoostClassifier(iterations=10, depth=5, learning_rate=0.1, loss_function='MultiClass', verbose=10),
+                estimator=CatBoostClassifier(iterations=10, depth=5, learning_rate=0.1, loss_function='MultiClass', verbose=10),# type: ignore
                 param_grid=param_grid,
                 cv=5,
                 verbose=10

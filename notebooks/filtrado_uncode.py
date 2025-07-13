@@ -49,8 +49,6 @@ top_pro = (
     .round(2)
 )
 # %%
-top_pro
-# %%
 # Lista de los 10 productos más exportados
 top_10_codigos = top_pro.head(10).index.tolist()
 #%%
@@ -66,7 +64,7 @@ exportaciones_por_pais = (
     .sort_values(by='qty', ascending=False)
 )
 
-exportaciones_por_pais
+exportaciones_por_pais # type: ignore
 
 # %%
 #AGRUPACIÓN PARA YUCA:
@@ -79,7 +77,7 @@ evolucion_anio_yuca = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_yuca
+evolucion_anio_yuca# type: ignore
 # %%
 #AGRUPACIÓN PARA PAPA:
 producto_71420 = df[df['cmdCode'] == 71420]
@@ -91,7 +89,7 @@ evolucion_anio_papa = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_papa
+evolucion_anio_papa# type: ignore
 # %%
 #AGRUPACIÓN PARA ÑAME:
 producto_71430 = df[df['cmdCode'] == 71430]
@@ -103,7 +101,7 @@ evolucion_anio_niame = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_niame
+evolucion_anio_niame# type: ignore
 # %%
 #AGRUPACIÓN PARA COCO:
 producto_80119 = df[df['cmdCode'] == 80119]
@@ -115,7 +113,7 @@ evolucion_anio_coco = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_coco
+evolucion_anio_coco# type: ignore
 # %%
 #AGRUPACIÓN PARA PLATANO:
 producto_80390 = df[df['cmdCode'] == 80390]
@@ -127,7 +125,7 @@ evolucion_anio_platano = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_platano
+evolucion_anio_platano# type: ignore
 # %%
 #AGRUPACIÓN PARA MAIZ:
 producto_100590 = df[df['cmdCode'] == 100590]
@@ -139,7 +137,7 @@ evolucion_anio_maiz = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_maiz
+evolucion_anio_maiz# type: ignore
 # %%
 #AGRUPACIÓN PARA ARROZ:
 producto_100610 = df[df['cmdCode'] == 100610]
@@ -151,7 +149,7 @@ evolucion_anio_arroz = (
     .sort_values(by='refYear')
 )
 
-evolucion_anio_arroz
+evolucion_anio_arroz# type: ignore
 # %%
 #GRÁFICOS SEPARADOS DE CADA PRODUCTO 
 #EN FUNCIÓN DE AÑOS Y CANTIDAD EXPORTADA
@@ -217,7 +215,7 @@ plt.figure(figsize=(12, 6))
 
 # Dibujar cada línea con nombre legible desde el diccionario
 for codigo in df_pivot.columns:
-    nombre = productos.get(codigo, f"Producto {codigo}") 
+    nombre = productos.get(codigo, f"Producto {codigo}")  # type: ignore
     plt.plot(df_pivot.index, df_pivot[codigo], marker='o', label=nombre)
 
 
@@ -231,3 +229,4 @@ plt.tight_layout()
 plt.show()
 
 # %%
+

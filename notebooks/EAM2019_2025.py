@@ -220,7 +220,7 @@ class ExploraAnalysis():
 
             # Detectar si está en Jupyter Notebook
             try:
-                shell = get_ipython().__class__.__name__
+                shell = get_ipython().__class__.__name__# type: ignore
                 if shell == 'ZMQInteractiveShell':
                     from IPython.display import display
                     display(duplicates)
@@ -311,7 +311,7 @@ class ExploraAnalysis():
         if column not in self.df.columns:
             print(f"La columna '{column}' no existe.")
             return []
-        if self.df[column].dtype == object or pd.api.types.is_categorical_dtype(self.df[column]):
+        if self.df[column].dtype == object or pd.api.types.is_categorical_dtype(self.df[column]):# type: ignore
             freq = self.df[column].value_counts(normalize=True)
             rares = freq[freq < threshold].index.tolist()
             print(f"[Rare Categories] Columna '{column}': {len(rares)} categorías raras detectadas.")
@@ -350,7 +350,7 @@ class ExploraAnalysis():
         for col in numeric_cols:
             outliers = self.detect_outliers_iqr(col)
             # Corregido para evitar error de ambigüedad al evaluar DataFrame en if
-            if not outliers.empty:
+            if not outliers.empty:# type: ignore
                 results[col] = outliers
         if not results:
             print("No se detectaron outliers en columnas numéricas.")
@@ -443,8 +443,8 @@ class ExploraAnalysis():
             cat_feature_positions = [i for i, col in enumerate(features.columns) if col in categorical_columns]
 
             param_grid = {'model_size_reg': [0.1, 1]}
-            grid_search = GridSearchCV(
-                estimator=CatBoostClassifier(iterations=10, depth=5, learning_rate=0.1, loss_function='MultiClass', verbose=10),
+            grid_search = GridSearchCV(# type: ignore
+                estimator=CatBoostClassifier(iterations=10, depth=5, learning_rate=0.1, loss_function='MultiClass', verbose=10),# type: ignore
                 param_grid=param_grid,
                 cv=5,
                 verbose=10
@@ -453,7 +453,7 @@ class ExploraAnalysis():
 
             best_model_size_reg = grid_search.best_params_['model_size_reg']
 
-            model = CatBoostClassifier(iterations=100, depth=5, learning_rate=0.1, loss_function='MultiClass', model_size_reg=best_model_size_reg, verbose=10, random_seed=10101101)
+            model = CatBoostClassifier(iterations=100, depth=5, learning_rate=0.1, loss_function='MultiClass', model_size_reg=best_model_size_reg, verbose=10, random_seed=10101101)# type: ignore
             model.fit(features, target, cat_features=cat_feature_positions)
             
             self.model = model
@@ -522,7 +522,7 @@ def analizar_departamento_estandarizado(df_total, codigo_dane, cultivos_extra, n
     
     top_expandido = pd.concat([top, produccion_extra])
     top_expandido = top_expandido[~top_expandido.index.duplicated()]  # Elimina duplicados
-    top_expandido.sort_values(ascending=False, inplace=True)
+    top_expandido.sort_values(ascending=False, inplace=True)# type: ignore
 
     # 5. Crear pivot
     cultivos_orden = top_expandido.index.tolist()
@@ -587,17 +587,17 @@ MUNICIPIO = CHOCO (No nos interesa para este analisis ya que se va eliminar)
 NOMBRE \nCIENTIFICO (Tampoco nos interesa y esta columna la vamos eliminar)
 Rendimiento\n(t/ha) = Vamos hacer el calculo manual ya que tenemos Producción\n(t)  y Área Cosechada\n(ha)
 '''
-eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Producción\n(t)'] / eam2006_2018['Área Cosechada\n(ha)']
-eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Rendimiento\n(t/ha)'].fillna(0)
+eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Producción\n(t)'] / eam2006_2018['Área Cosechada\n(ha)']# type: ignore
+eam2006_2018['Rendimiento\n(t/ha)'] = eam2006_2018['Rendimiento\n(t/ha)'].fillna(0)# type: ignore
 #%%
-eam2006_2018.isna().sum()
+eam2006_2018.isna().sum() # type: ignore
 #%%
 # Se renombra columnas de eam2006_2018
-eam2006_2018.rename(columns=mapeo_2006_2018, inplace = True)
+eam2006_2018.rename(columns=mapeo_2006_2018, inplace = True)# type: ignore
 
 #%%
 # Se elimina columna 'Código del cultivo' de eam2019_2023
-eam2019_2023.drop(['Código del cultivo'], axis = 1, inplace = True)
+eam2019_2023.drop(['Código del cultivo'], axis = 1, inplace = True)# type: ignore
 
 #%% #borrar
 # Se renombra columnas de eam2019_2023
@@ -621,11 +621,11 @@ mapeo_2019_2023 = {
     'Nombre científico del cultivo': 'Nombre cientifico'
 }
 
-eam2019_2023.rename(columns=mapeo_2019_2023, inplace = True)
+eam2019_2023.rename(columns=mapeo_2019_2023, inplace = True)# type: ignore
 
 #%%
 # Se coloca en la misma posicion las columnas
-eam2019_2023 = eam2019_2023[eam2006_2018.columns]
+eam2019_2023 = eam2019_2023[eam2006_2018.columns]# type: ignore
 
 #%%
 # Se une dataset eam2006_2018 y eam2019_2023

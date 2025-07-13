@@ -1,14 +1,15 @@
 import pandas as pd
 from pathlib import Path
 from src.preprocesamiento import DataPreproc
-from src.analisis_departamento import analizar_departamento
+from src.analisis_departamento import analizar_departamento 
 from src.pipeline import ejecutar_pipeline, procesar_eam_2006_2018, procesar_eam_2019_2023
+
 
 
 # ===Archivos históricos que se deben unir ===
 archivos_consecutivos = [
-    Path("DATOS\Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),
-    Path("DATOS\Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv")
+    Path("DATOS\Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),# type: ignore
+    Path("DATOS\Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv") # type: ignore
 ]
 
 # ===Cargar y procesar individualmente ===
