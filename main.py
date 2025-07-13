@@ -1,8 +1,10 @@
 # main.py
 import os
-from unidecode import unidecode
-from pathlib import Path
 import pandas as pd
+from pathlib import Path
+import plotly.express as px
+from unidecode import unidecode
+import plotly.graph_objects as go
 from sklearn.preprocessing import MinMaxScaler
 from src.preprocesamiento import DataPreproc
 from src.analisis_departamento import analizar_departamento 
@@ -148,17 +150,12 @@ for nombre_depto in df_comparativo['nombre_departamento'].unique():
     except Exception as e:
         print(f"❌ Error en análisis de {nombre_depto.title()}: {e}")
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-
 # === Leer archivo de cultivos comparativos ===
 df_comparativo = pd.read_csv("reports/cultivos_comparativos_caribe.csv")
 
 print(df_comparativo.info())
 
-
-# === 1. Gráfica: Evolución temporal por cultivo ===
+# === 1. Gráfica interactiva: Evolución temporal por cultivo ===
 def graficar_evolucion(df, cultivo_objetivo="arroz"):
     df_filtrado = df[df['cultivo'].str.lower() == cultivo_objetivo.lower()]
     if df_filtrado.empty:
@@ -166,41 +163,65 @@ def graficar_evolucion(df, cultivo_objetivo="arroz"):
         return
     
     pivot = df_filtrado.groupby(['anio', 'nombre_departamento'])['produccion_toneladas'].sum().reset_index()
-    plt.figure(figsize=(12, 6))
-    sns.lineplot(data=pivot, x='anio', y='produccion_toneladas', hue='nombre_departamento', marker='o')
-    plt.title(f"Evolución de la producción de {cultivo_objetivo.title()} por departamento")
-    plt.ylabel("Producción (toneladas)")
-    plt.xlabel("Año")
-    plt.legend(title="Departamento")
-    plt.grid(True)
-    plt.tight_layout()
-    plt.savefig(f"reports/evolucion_{cultivo_objetivo.lower()}.png")
-    plt.show()
 
-# === 2. Gráfica: Barras apiladas de cultivos top ===
+    fig = px.line(
+        pivot,
+        x='anio',
+        y='produccion_toneladas',
+        color='nombre_departamento',
+        markers=True,
+        title=f"Evolución de la producción de {cultivo_objetivo.title()} por departamento",
+        labels={
+            'anio': 'Año',
+            'produccion_toneladas': 'Producción (toneladas)',
+            'nombre_departamento': 'Departamento'
+        }
+    )
+    fig.update_layout(hovermode="x unified")
+    fig.write_html(f"reports/evolucion_{cultivo_objetivo.lower()}.html")
+    fig.show()
+
+# === 2. Gráfica interactiva: Barras apiladas de cultivos top ===
 def graficar_cultivos_top(df):
     pivot = df.groupby(['anio', 'cultivo'])['produccion_toneladas'].sum().reset_index()
-    pivot = pivot.pivot(index='anio', columns='cultivo', values='produccion_toneladas').fillna(0)
-    pivot.plot(kind='bar', stacked=True, figsize=(14, 7), colormap='tab20')
-    plt.title("Comparación de producción de cultivos top - Caribe")
-    plt.ylabel("Producción total (toneladas)")
-    plt.xlabel("Año")
-    plt.tight_layout()
-    plt.savefig("reports/cultivos_top_comparacion.png")
-    plt.show()
 
-# === 3. Gráfica: Heatmap de eficiencia ===
+    fig = px.bar(
+        pivot,
+        x='anio',
+        y='produccion_toneladas',
+        color='cultivo',
+        title="Comparación de producción de cultivos top - Caribe",
+        labels={
+            'anio': 'Año',
+            'produccion_toneladas': 'Producción total (toneladas)',
+            'cultivo': 'Cultivo'
+        },
+        text_auto=True
+    )
+    fig.update_layout(barmode='stack')
+    fig.write_html("reports/cultivos_top_comparacion.html")
+    fig.show()
+
+# === 3. Gráfica interactiva: Heatmap de eficiencia ===
 def graficar_heatmap_rendimiento(df):
     pivot = df.groupby(['nombre_departamento', 'cultivo'])['rendimiento_ton_ha'].mean().reset_index()
-    pivot = pivot.pivot(index='nombre_departamento', columns='cultivo', values='rendimiento_ton_ha')
-    plt.figure(figsize=(12, 7))
-    sns.heatmap(pivot, annot=True, fmt=".1f", cmap="YlGnBu")
-    plt.title("Rendimiento promedio (ton/ha) por cultivo y departamento")
-    plt.xlabel("Cultivo")
-    plt.ylabel("Departamento")
-    plt.tight_layout()
-    plt.savefig("reports/heatmap_rendimiento.png")
-    plt.show()
+
+    fig = px.density_heatmap(
+        pivot,
+        x='cultivo',
+        y='nombre_departamento',
+        z='rendimiento_ton_ha',
+        color_continuous_scale="YlGnBu",
+        text_auto='.1f',
+        title="Rendimiento promedio (ton/ha) por cultivo y departamento",
+        labels={
+            'cultivo': 'Cultivo',
+            'nombre_departamento': 'Departamento',
+            'rendimiento_ton_ha': 'Rendimiento (ton/ha)'
+        }
+    )
+    fig.write_html("reports/heatmap_rendimiento.html")
+    fig.show()
 
 # === Ejecutar las gráficas ===
 graficar_evolucion(df_comparativo, cultivo_objetivo="arroz")
