@@ -637,6 +637,51 @@ df_total.drop(['Nombre Departamento','Codigo Dane municipio',\
         'Nombre cientifico','Grupo cultivo','Subgrupo Cultivo',\
         'Estado fisico'], axis=1, inplace=True)
 
+#%%
+# San Andrés
+pivot_san = analizar_departamento_estandarizado(
+    df_total,
+    codigo_dane=88,
+    cultivos_extra=['name', 'maiz', 'arroz', 'palma de aceite'],
+    nombre_departamento='San Andrés'
+)
+
+#%%
+# Bolívar
+pivot_bolivar = analizar_departamento_estandarizado(
+    df_total,
+    codigo_dane=13,
+    cultivos_extra=['coco', 'patilla', 'platano', 'batata'],
+    nombre_departamento='Bolívar'
+)
+
+# Córdoba
+pivot_cordoba = analizar_departamento_estandarizado(
+    df_total,
+    codigo_dane=23,
+    cultivos_extra=['coco', 'batata', 'palma de aceite', 'patilla'],
+    nombre_departamento='Córdoba'
+)
+
+# Sucre
+pivot_sucre = analizar_departamento_estandarizado(
+    df_total,
+    codigo_dane=70,
+    cultivos_extra=['coco', 'platano', 'batata', 'palma de aceite'],
+    nombre_departamento='Sucre'
+)
+
+
+
+
+
+
+
+
+
+
+
+
 
 # %%
 # analisis Archipiélago de San Andrés, Providencia y Santa Catalina
