@@ -13,8 +13,8 @@ from src.pipeline import ejecutar_pipeline, procesar_eam_2006_2018, procesar_eam
 
 # === Archivos a procesar ===
 archivos_consecutivos = [
-    Path("DATOS\Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),# type: ignore
-    Path("DATOS\Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv") # type: ignore
+    Path("data/raw/bolivar/Evaluaciones_Agropecuarias_Municipales_EVA_20250615.csv"),# type: ignore
+    Path("data/raw/bolivar/Evaluaciones_Agropecuarias_Municipales___EVA._2019_-_2023._Base_Agr_cola_20250615.csv") # type: ignore
 ]
 
 # === Cargar y procesar archivos históricos ===
@@ -212,7 +212,7 @@ def graficar_heatmap_rendimiento(df):
         y='nombre_departamento',
         z='rendimiento_ton_ha',
         color_continuous_scale="YlGnBu",
-        text_auto='.1f',
+        text_auto='.1f', # type: ignore
         title="Rendimiento promedio (ton/ha) por cultivo y departamento",
         labels={
             'cultivo': 'Cultivo',
